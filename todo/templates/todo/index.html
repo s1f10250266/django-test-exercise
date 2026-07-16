@@ -58,6 +58,10 @@
         <li>Status: Not Completed</li>
         {% endif %}
       </ul>
+      <form action="{% url 'toggle_complete' task.id %}" method="post" style="display:inline; margin-top: 0.5em;">
+        {% csrf_token %}
+        <button type="submit">{% if task.completed %}未完了にする{% else %}完了にする{% endif %}</button>
+      </form>
     </div>
     {% endfor %}
   </body>
