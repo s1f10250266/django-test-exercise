@@ -54,4 +54,21 @@ def update(request, task_id):
     context = {
         'task': task
     }
-    return render(request, "todo/edit.html", context) 
+    return render(request, "todo/edit.html", context)
+
+
+def toggle_complete(request, task_id):
+    try:
+        task = Task.objects.get(pk=task_id)
+    except Task.DoesNotExist:
+        raise Http404("Task does not exist")
+
+    if request.method != 'POST':
+        return redirect('index')
+
+    task.completed = not task.completed
+    task.save()
+
+    if request.POST.get('from_detail'):
+        return redirect(detail, task_id)
+    return redirect('index')

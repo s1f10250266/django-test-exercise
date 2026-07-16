@@ -23,6 +23,12 @@
       {% endif %}
     </ul>
 
+    <form action="{% url 'toggle_complete' task.id %}" method="post" style="margin-bottom: 1em;">
+      {% csrf_token %}
+      <input type="hidden" name="from_detail" value="1">
+      <button type="submit">{% if task.completed %}未完了にする{% else %}完了にする{% endif %}</button>
+    </form>
+
     <div>
       <a href="{% url 'index' %}">Top</a>
       | <a href="{% url 'delete' task.id %}">Delete</a>
