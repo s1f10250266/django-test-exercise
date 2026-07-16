@@ -12,14 +12,20 @@ def index(request):
                     due_at=make_aware(parse_datetime(request.POST['due_at'])))
         task.save()
 
+    tasks = Task.objects.all()
+    query = request.GET.get('q', '')
+    if query:
+        tasks = tasks.filter(title__icontains=query)
+
     if request.GET.get('order') == 'due':
-        tasks = Task.objects.order_by('due_at')
+        tasks = tasks.order_by('due_at')
     else:
-        tasks = Task.objects.order_by('-posted_at')
+        tasks = tasks.order_by('-posted_at')
 
     context = {
         'tasks': tasks,
         'now': timezone.now(),
+        'query': query,
     }
     return render(request, 'todo/index.html', context)
 
@@ -57,4 +63,21 @@ def update(request, task_id):
     context = {
         'task': task
     }
-    return render(request, "todo/edit.html", context) 
+    return render(request, "todo/edit.html", context)
+
+
+def toggle_complete(request, task_id):
+    try:
+        task = Task.objects.get(pk=task_id)
+    except Task.DoesNotExist:
+        raise Http404("Task does not exist")
+
+    if request.method != 'POST':
+        return redirect('index')
+
+    task.completed = not task.completed
+    task.save()
+
+    if request.POST.get('from_detail'):
+        return redirect(detail, task_id)
+    return redirect('index')
