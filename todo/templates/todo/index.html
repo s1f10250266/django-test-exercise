@@ -38,10 +38,13 @@
       <h2><a href="{% url 'detail' task.id %}">{{ task.title }}</a></h2>
       <ul>
         <li>Posted at: {{ task.posted_at }}</li>
-        {% if task.due_at %} 
-        <li>Due at: {{ task.due_at }}</li>
+        {% if task.due_at %}
+        <li{% if task.due_at < now %} class="overdue"{% endif %}>
+          Due at: {{ task.due_at }}
+          {% if task.due_at < now %}<strong>期限切れ</strong>{% endif %}
+        </li>
         {% endif %}
-        {% if task.completed %} 
+        {% if task.completed %}
         <li>Status: Completed</li>
         {% else %}
         <li>Status: Not Completed</li>

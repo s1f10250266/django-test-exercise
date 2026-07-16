@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 from django.http import Http404
+from django.utils import timezone
 from django.utils.timezone import make_aware
 from django.utils.dateparse import parse_datetime
 from todo.models import Task
@@ -17,7 +18,8 @@ def index(request):
         tasks = Task.objects.order_by('-posted_at')
 
     context = {
-        'tasks': tasks
+        'tasks': tasks,
+        'now': timezone.now(),
     }
     return render(request, 'todo/index.html', context)
 
@@ -29,6 +31,7 @@ def detail(request, task_id):
 
     context = {
         'task': task,
+        'now': timezone.now(),
     }
     return render(request, 'todo/detail.html', context)
 
