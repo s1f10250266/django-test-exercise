@@ -11,13 +11,19 @@ def index(request):
                     due_at=make_aware(parse_datetime(request.POST['due_at'])))
         task.save()
 
+    tasks = Task.objects.all()
+    query = request.GET.get('q', '')
+    if query:
+        tasks = tasks.filter(title__icontains=query)
+
     if request.GET.get('order') == 'due':
-        tasks = Task.objects.order_by('due_at')
+        tasks = tasks.order_by('due_at')
     else:
-        tasks = Task.objects.order_by('-posted_at')
+        tasks = tasks.order_by('-posted_at')
 
     context = {
-        'tasks': tasks
+        'tasks': tasks,
+        'query': query,
     }
     return render(request, 'todo/index.html', context)
 
